@@ -15,6 +15,13 @@ module.exports = (err, req, res, next) => {
       errorCode = "INVALID_EMAIL"
       message = err.errors.map(el => el.message)
       break;
+
+      case (err.name === "customError"):
+        statusCode = 400
+        errorCode = "INVALID_DATA"
+        // message = err.errors.map(el => el.message)
+        message = err.message
+        break;
     default:
       break;
   }
