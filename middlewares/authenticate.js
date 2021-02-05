@@ -7,7 +7,7 @@ const authenticate = (req, res, next) => {
     req.decoded = decoded
     next()
   } catch (err) {
-    next({name: "Not allowed",message: "Invalid User"})
+    next({name: "Not Authenticate",message: "Invalid User"})
   }
 }
 

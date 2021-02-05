@@ -19,7 +19,12 @@ module.exports = (err, req, res, next) => {
       case (err.name === "customError"):
         statusCode = 400
         errorCode = "INVALID_DATA"
-        // message = err.errors.map(el => el.message)
+        message = err.message
+        break;
+
+      case (err.name === "Not Authenticate"):
+        statusCode = 400
+        errorCode = "USER_NOT_AUTHENTICATED"
         message = err.message
         break;
     default:
