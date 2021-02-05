@@ -21,6 +21,9 @@ class userController {
     static async login(req, res, next) {
         try {
             const { email, password } = req.body
+            if (!email) {
+                throw {name: "customError", message: 'invalid email/password'}
+            }
             const user = await User.findOne({
                 where: {
                     email: email
