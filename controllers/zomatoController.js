@@ -13,12 +13,11 @@ class ZomatoController {
     }).then(response => {
       res.json(response.data)
     }).catch(err => {
-      console.log(err);
-      res.status(500).json(err)
+      console.log(err.name);
+      next(err)
     })
   }
   static cities(req, res, next) {
-    // let city = req.query
     axios({
       method: "get",
       url: `https://developers.zomato.com/api/v2.1/cities?q=Jakarta`,
@@ -28,7 +27,7 @@ class ZomatoController {
     }).then(response => {
       res.status(200).json(response.data)
     }).catch(err => {
-      res.status(500).json(err)
+      next(err)
     })
   }
   static cuisines(req, res, next) {
@@ -41,11 +40,10 @@ class ZomatoController {
     }).then(response => {
       res.status(200).json(response.data)
     }).catch(err => {
-      res.status(500).json(err)
+      next(err)
     })
   }
   static collections(req, res, next) {
-    // let cityId = req.query.city_id
     axios({
       method: "get",
       url: `https://developers.zomato.com/api/v2.1/collections?city_id=74`,
@@ -55,7 +53,7 @@ class ZomatoController {
     }).then(response => {
       res.status(200).json(response.data)
     }).catch(err => {
-      res.status(500).json(err)
+      next(err)
     })
   }
   static search(req, res, next) {
@@ -68,7 +66,7 @@ class ZomatoController {
     }).then(response => {
       res.status(200).json(response.data.restaurants)
     }).catch(err => {
-      res.status(500).json(err)
+      next(err)
     })
   }
 }

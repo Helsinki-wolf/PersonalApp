@@ -4,7 +4,7 @@ const { generateToken } = require('../helpers/jwt')
 const { OAuth2Client } = require('google-auth-library')
 
 class userController {
-    static register(req, res) {
+    static register(req, res, next) {
         const { name, email, password } = req.body
         User.create({
             name, email, password
@@ -13,7 +13,8 @@ class userController {
                 return res.status(201).json({ id: user.id, name: user.name, email: user.email, password: user.password })
             })
             .catch(err => {
-                return res.status(400).json(err)
+                // console.log(err.errors);
+                next(err)
             })
     }
 
