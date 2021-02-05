@@ -23,7 +23,7 @@ module.exports = (err, req, res, next) => {
         break;
 
       case (err.name === "Not Authenticate"):
-        statusCode = 400
+        statusCode = 401
         errorCode = "USER_NOT_AUTHENTICATED"
         message = err.message
         break;
