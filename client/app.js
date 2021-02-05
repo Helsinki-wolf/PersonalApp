@@ -39,6 +39,7 @@ function defaultHome() {
     $("#mainMenu").show()
     $("#menuWelcome").show()
     $("#artHarvard").hide()
+    $("#zomato").hide()
 }
 
 $("#toRegister").click(() => {
@@ -124,6 +125,12 @@ $("#publicApiArt").click(()=>{
 
 })
 
+$("#publicApiZomato").click(()=>{
+    loadFoodCollections()
+    loadFoodCategories()
+    loadZomato()
+})
+
 
 function loadArts(pageNum){
     $("#mainMenu").hide()
@@ -144,7 +151,10 @@ function loadArts(pageNum){
 
     $.ajax({
         url: `${baseUrl}/harvard/${pageNum}`,
-        method: 'GET'
+        method: 'GET',
+        headers: {
+            token: localStorage.getItem('token')
+        }
     })
     .done((result)=>{
         console.log(result)
@@ -195,6 +205,148 @@ function loadArts(pageNum){
         console.log(err)
     })
 }
+
+
+function loadZomato(){
+    $("#mainMenu").hide()
+    $("#zomato").show()
+
+    $("#foods").empty()
+    $("#foods").append(`
+        <div class="ui segment">
+            <div class="ui active inverted dimmer">
+            <div class="ui large text loader">Loading</div>
+            </div>
+            <p></p>
+            <p></p>
+            <p></p>
+        </div>
+    `)
+
+    $.ajax({
+        url: `${baseUrl}/foods/search`,
+        method: 'GET',
+        headers: {
+            token: localStorage.getItem('token')
+        }
+    })
+    .done((result)=>{
+        // console.log(result)
+
+        $("#foods").empty()
+
+        result.forEach(el => {
+            $("#foods").append(`
+            <div class="ui card">
+                <div class="image">
+                <img src="${el.restaurant.featured_image}" onError="this.onerror=null;this.src='https://s3.amazonaws.com/speedsport-news/speedsport-news/wp-content/uploads/2018/07/01082232/image-not-found.png';">
+                </div>
+                <div class="content">
+                <a class="header">${el.restaurant.name}</a>
+                <div class="meta">
+                    <span class="date">${el.restaurant.cuisines}</span>
+                </div>
+                <div class="description">
+                    ${el.restaurant.location.address}
+                </div>
+                </div>
+                <div class="extra content">
+                    <span class="right floated">
+                        Review(${el.restaurant.all_reviews_count})
+                    </span>
+                    <span>
+                        Rating: <span style="font-weight:bold; color:black;">${el.restaurant.user_rating.aggregate_rating}</span>
+                        <div class="ui star rating" data-rating="1"></div>
+                        <i class="star icon" style="color:orange;"></i>
+                        (${el.restaurant.user_rating.votes})
+                    </span>
+                </div>
+            </div>
+            `)
+
+        })
+
+        $("#foods").append(`
+        <div id="artHarvardBtn" style="margin: 60px auto 30px; text-align:center; width: 100%;">
+            <button onclick="defaultHome()" class="ui basic button">
+            <i class="icon user"></i>
+                Back to Menu
+            </button>
+        </div>
+        `)
+
+    })
+    .fail((err)=>{
+        console.log(err)
+    })
+
+}
+
+function loadFoodCategories(){
+    $.ajax({
+        url: `${baseUrl}/foods/categories`,
+        method: 'GET',
+        headers: {
+            token: localStorage.getItem('token')
+        }
+    })
+    .done((result)=>{
+        $("#foodCategories").empty()
+
+        // console.log(result.categories)
+
+        result.categories.forEach((el)=>{
+            $("#foodCategories").append(`
+                <a class="item">${el.categories.name}</a>
+            `)
+
+        })
+
+
+    })
+    .fail((err)=>{
+        console.log(err)
+    })
+}
+
+function loadFoodCollections(){
+    $.ajax({
+        url: `${baseUrl}/foods/collections`,
+        method: 'GET',
+        headers: {
+            token: localStorage.getItem('token')
+        }
+    })
+    .done((result)=>{
+        // console.log(result)
+        try{
+            result.collections.forEach((el, index) => {
+                if(index>5){
+                    throw 'max 5 collections'
+                }
+                $("#foodCollections").append(`
+                    <div class="item">
+                        <i class="large github middle aligned icon"></i>
+                        <div class="content">
+                            <a class="header" href="${el.collection.url}">${el.collection.title}</a>
+                            <div class="description">${el.collection.description}</div>
+                        </div>
+                    </div>
+                `)
+            })
+        }catch(err){
+            console.log(err)
+        }
+    })
+    .fail((err)=>{
+        console.log(err)
+    })
+}
+
+
+
+
+
 
 
 
