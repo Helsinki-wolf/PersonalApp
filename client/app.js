@@ -27,6 +27,8 @@ function defaultLogout(){
     $("#mainMenu").hide()
     $("#menuWelcome").hide()
     $("#artHarvard").hide()
+    $("#zomato").hide()
+    $("#weather").hide()
 }
 
 function defaultHome() {
@@ -99,7 +101,7 @@ $("#login").click((e) => {
         }
     })
     .done((result)=>{
-        console.log(result)
+        // console.log(result)
 
         localStorage.setItem('token', result.access_token)
         
@@ -448,8 +450,10 @@ function onSignIn(googleUser) {
         }
     })
         .done((response) => {
+            console.log(response)
             localStorage.setItem('acces_token', response.access_token)
-            auth()
+            // auth()
+            defaultHome()
         })
         .fail((err) => {
             console.log(err);
@@ -468,8 +472,10 @@ function login() {
         }
     })
         .done((response) => {
+            console.log(response.acces_token)
             localStorage.setItem('access_token', response.acces_token)
-            auth()
+            // auth()
+            defaultHome()
         })
         .fail((xhr, text) => {
             console.log(xhr, text);
