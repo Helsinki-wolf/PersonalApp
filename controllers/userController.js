@@ -4,7 +4,7 @@ const { generateToken } = require('../helpers/jwt')
 const { OAuth2Client } = require('google-auth-library')
 
 class userController {
-    static register(req, res) {
+    static register(req, res, next) {
         const { name, email, password } = req.body
         User.create({
             name, email, password
@@ -13,11 +13,12 @@ class userController {
                 return res.status(201).json({ id: user.id, name: user.name, email: user.email, password: user.password })
             })
             .catch(err => {
-                return res.status(400).json(err)
+                console.log(err);
+                next(err)
             })
     }
 
-    static async login(req, res) {
+    static async login(req, res, next) {
         try {
             const { email, password } = req.body
             const user = await User.findOne({
@@ -26,9 +27,7 @@ class userController {
                 }
             })
             if (!user) {
-                return res.status(401).json({
-                    message: 'invalid email/password'
-                })
+                throw {name: "customError", message: 'invalid email/password'}
             }
             const match = comparePassword(password, user.password)
             if (match) {
@@ -41,13 +40,12 @@ class userController {
                     access_token: access_token
                 })
             } else {
-                return res.status(401).json({
-                    message: 'invalid email/password'
-                })
+                throw {name: "customError", message: 'invalid email/password'}
             }
         }
         catch (err) {
-            return res.status(401).json(err)
+            console.log(err);
+            next(err)
         }
     }
     static googleLogin(req, res, next) {
