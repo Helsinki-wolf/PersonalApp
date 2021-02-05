@@ -40,6 +40,7 @@ function defaultHome() {
     $("#menuWelcome").show()
     $("#artHarvard").hide()
     $("#zomato").hide()
+    $("#weather").hide()
 }
 
 $("#toRegister").click(() => {
@@ -106,8 +107,8 @@ $("#login").click((e) => {
     })
     .fail((err)=>{
         console.log(err.message)
-        $("#registerError").show()
-        $("#registerErrorMessage").text(JSON.stringify(err))
+        $("#loginError").show()
+        $("#loginErrorMessage").text(JSON.stringify(err))
     })
 
 })
@@ -129,6 +130,10 @@ $("#publicApiZomato").click(()=>{
     loadFoodCollections()
     loadFoodCategories()
     loadZomato()
+})
+
+$("#publicApiWeather").click(()=>{
+    loadWeather()
 })
 
 
@@ -343,6 +348,76 @@ function loadFoodCollections(){
     })
 }
 
+
+
+function loadWeather(){
+    $("#mainMenu").hide()
+    $("#weather").show()
+
+    $("weatherInfo").empty()
+    $("#weatherInfo").append(`
+        <div class="ui">
+            <div class="ui active inverted dimmer">
+            <div class="ui large text loader">Loading</div>
+            </div>
+            <p></p>
+            <p></p>
+            <p></p>
+        </div>
+    `)
+
+    $.ajax({
+        url: `${baseUrl}/weather`,
+        method: 'GET',
+        headers: {
+            token: localStorage.getItem('token')
+        }
+    })
+    .done((result)=>{
+        $("#weatherInfo").empty()
+        $("#weatherInfo").append(`
+        <div class="ui card" style="margin:auto;">
+            <div class="content">
+                <img class="ui avatar image" src="https://semantic-ui.com/images/logo.png"> Weather
+            </div>
+            <div class="content">
+                <div class="center aligned header">${result.location.name}</div>
+                <div class="center aligned description">
+                    ${result.current.weather_descriptions.map(el => {
+                        return `<p>"${el}"</p>`
+                    })}
+                </div>
+                <div class="center aligned author" style="margin: 20px 0;">
+                    ${result.current.weather_icons.map(el => {
+                        return `<img class="ui avatar image" src="${el}">`
+                    })}
+                </div>
+            </div>
+            <div class="extra content">
+                <span class="left floated like">
+                    <i class="time icon"></i>
+                    ${result.current.observation_time}
+                </span>
+                <span class="right floated star">
+                    ${result.location.country}
+                </span>
+            </div>
+        </div>
+        `)
+
+        $("#weatherInfo").append(`
+        <div id="artHarvardBtn" style="margin: 60px auto 30px; text-align:center; width: 100%;">
+            <button onclick="defaultHome()" class="ui basic button">
+            <i class="icon user"></i>
+                Back to Menu
+            </button>
+        </div>
+        `)
+    })
+    .catch((err)=>{
+        console.log(err)
+    })
+}
 
 
 
